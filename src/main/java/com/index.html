@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <title>Books CRUD 超簡單版</title>
+  <style>
+    body { font-family: Arial; background:#f5f6fa; padding:20px; }
+    .card { background:#fff; padding:16px; margin-bottom:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); }
+    label { display:block; margin-top:8px; }
+    input { width:100%; padding:6px; }
+    button { margin-top:10px; padding:6px 12px; }
+    pre { background:#222; color:#fff; padding:10px; }
+  </style>
+</head>
+<body>
+
+<h1>📚 Books CRUD（新手安心版）</h1>
+
+<div class="card">
+  <h2>GET Book（查詢）</h2>
+  <label>Book ID</label>
+  <input id="getId" type="number" />
+  <button onclick="getBook()">查詢</button>
+  <pre id="getResult"></pre>
+</div>
+
+<div class="card">
+  <h2>POST Book（新增）</h2>
+  <label>Title</label><input id="postTitle" />
+  <label>Author</label><input id="postAuthor" />
+  <label>Image URL</label><input id="postImage" />
+  <label>Price</label><input id="postPrice" type="number" />
+  <label>Published Date</label><input id="postDate" />
+  <button onclick="postBook()">新增</button>
+  <pre id="postResult"></pre>
+</div>
+
+<div class="card">
+  <h2>PUT Book（更新）</h2>
+  <label>Book ID</label><input id="putId" type="number" />
+  <label>Title</label><input id="putTitle" />
+  <label>Author</label><input id="putAuthor" />
+  <label>Image URL</label><input id="putImage" />
+  <label>Price</label><input id="putPrice" type="number" />
+  <label>Published Date</label><input id="putDate" />
+  <button onclick="putBook()">更新</button>
+  <pre id="putResult"></pre>
+</div>
+
+<div class="card">
+  <h2>DELETE Book（刪除）</h2>
+  <label>Book ID</label><input id="deleteId" type="number" />
+  <button onclick="deleteBook()">刪除</button>
+  <pre id="deleteResult"></pre>
+</div>
+
+<script>
+const baseUrl = 'http://localhost:8080/books';
+
+function getBook() {
+  const id = document.getElementById('getId').value;
+  fetch(baseUrl + '/' + id)
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('getResult').textContent = JSON.stringify(data, null, 2);
+    })
+    .catch(() => alert('查詢失敗'));
+}
+
+function postBook() {
+  const body = {
+    title: postTitle.value,
+    author: postAuthor.value,
+    imageUrl: postImage.value,
+    price: Number(postPrice.value),
+    publishedDate: postDate.value
+  };
+
+  fetch(baseUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+  .then(res => res.json())
+  .then(data => postResult.textContent = JSON.stringify(data, null, 2));
+}
+
+function putBook() {
+  const id = putId.value;
+  const body = {
+    title: putTitle.value,
+    author: putAuthor.value,
+    imageUrl: putImage.value,
+    price: Number(putPrice.value),
+    publishedDate: putDate.value
+  };
+
+  fetch(baseUrl + '/' + id, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  })
+  .then(res => res.json())
+  .then(data => putResult.textContent = JSON.stringify(data, null, 2));
+}
+
+function deleteBook() {
+  const id = deleteId.value;
+  fetch(baseUrl + '/' + id, { method: 'DELETE' })
+    .then(res => {
+      if (res.status === 204) deleteResult.textContent = '書本已經刪除';
+    });
+}
+</script>
+
+</body>
+</html>
